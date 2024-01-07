@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<!-- By XMMR12, Feel free to use it :D -->
+<head>
+    <title>Upload Multiple Images and Product Details</title>
+    <style>
+        .image-preview {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .image-preview img {
+            max-width: 100px;
+            max-height: 100px;
+        }
+    </style>
+</head>
+<body>
+    <form action="ap.php" method="post" enctype="multipart/form-data">
+        <!-- Other form fields go here -->
+
+        <div class="u-form-group u-form-group-8">
+            <label for="text-d787" class="u-label">Images</label>
+            <input id="formImages" class="u-input u-input-rectangle u-radius u-input-7" type="file" name="images[]" accept="image/png, image/jpg, image/jpeg, image/bmp" onchange="preview()" multiple>
+        </div>
+        <div id="imagePreviewContainer" class="image-preview"></div>
+        <div class="u-form-group u-form-input-layout-horizontal u-form-radiobutton u-form-group-9">
+            <label class="u-label">Cover Image Selection</label>
+            <div id="coverImageSelection" class="u-form-radio-button-wrapper"></div>
+        </div>
+
+        <input type="submit" value="Upload Product" name="submit">
+    </form>
+</body>
+
+<script>
+        function preview() {
+            var images = document.getElementById('formImages').files;
+            var previewContainer = document.getElementById('imagePreviewContainer');
+            var coverImageSelection = document.getElementById('coverImageSelection');
+            
+            // Clear previous previews
+            previewContainer.innerHTML = '';
+            coverImageSelection.innerHTML = '';
+
+            // Limit to 9 images
+            if (images.length > 9) {
+                alert('You can only upload a maximum of 9 images.');
+                return;
+            }
+
+            // Create image previews and radio buttons
+            for (var i = 0; i < images.length; i++) {
+                var img = document.createElement('img');
+                img.src = URL.createObjectURL(images[i]);
+                img.onload = function() {
+                    URL.revokeObjectURL(this.src); // Free memory
+                };
+                previewContainer.appendChild(img);
+
+                var radio = document.createElement('input');
+                radio.type = 'radio';
+                radio.name = 'cover_image';
+                radio.value = images[i].name;
+                radio.id = 'cover' + i;
+                radio.required = true;
+                if (i === 0) radio.checked = true; // First image as cover by default
+
+                var label = document.createElement('label');
+                label.htmlFor = 'cover' + i;
+                label.appendChild(document.createTextNode('Cover ' + (i + 1)));
+
+                coverImageSelection.appendChild(radio);
+                coverImageSelection.appendChild(label);
+            }
+        }
+    </script>
+
+</html>
